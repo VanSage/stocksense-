@@ -1,196 +1,309 @@
-# StockSense
+# StockSense — Smart Inventory Management & Retail Analytics
 
-**Demand prediction and smart restocking assistant for small retailers** — kirana
-stores, medical/pharmacy shops, and stationery outlets that manage inventory
-by memory and instinct, with no barcode scanner, no POS terminal, and no IT
-budget.
+StockSense is a full-stack inventory management application designed to help small retailers manage products, track sales, monitor stock levels, and make more informed inventory decisions.
 
-This is the full-stack implementation: a Python/FastAPI backend (with the
-prediction engine built in) and a React + Bootstrap frontend, talking to
-each other over a REST API.
+The project combines a React-based user interface with a Python FastAPI backend, bringing inventory operations, demand prediction, alerts, and analytics into one application.
 
----
+## Table of Contents
 
-## Quick start
+- [Overview](#overview)
+- [Key Features](#key-features)
+- [Technology Stack](#technology-stack)
+- [Application Architecture](#application-architecture)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Running the Application](#running-the-application)
+- [API Documentation](#api-documentation)
+- [Testing](#testing)
+- [Environment Configuration](#environment-configuration)
+- [Current Status](#current-status)
+- [Future Improvements](#future-improvements)
 
-You need two terminals — one for the backend, one for the frontend.
+## Overview
 
-### 1. Backend
+Small retailers need to balance product availability with the cost of holding excess inventory. StockSense aims to make this process easier by bringing stock management, sales tracking, demand prediction, and business analytics into a single application.
+
+The project demonstrates how a full-stack application can combine backend API development, frontend engineering, data processing, and analytical insights to address a practical business problem.
+
+## Key Features
+
+### Inventory Management
+- Manage and monitor product inventory.
+- Track stock levels and inventory-related information.
+- Support stock management workflows through a dedicated interface.
+
+### Sales Management
+- Record sales transactions.
+- Connect sales activity with inventory management workflows.
+- Make sales information available for business analysis.
+
+### Demand Prediction & Smart Restocking
+- Provide demand prediction functionality.
+- Support inventory planning through stock alerts and restocking-related features.
+- Help users identify inventory conditions that may require attention.
+
+*Forecast accuracy and prediction performance should be evaluated against suitable historical data before drawing conclusions about model quality.*
+
+### Analytics Dashboard
+- Present business and inventory information through a dashboard.
+- Organize analytics into dedicated views.
+- Help users explore operational information and identify useful patterns.
+
+### Customer Management
+- Provide customer-related management functionality.
+- Include a dedicated customer interface and customer credit tracking functionality.
+
+### Authentication & Application Security
+- Provide login and signup workflows.
+- Organize application access through authentication and protected frontend routes.
+- Use backend authentication and security components.
+
+## Technology Stack
+
+| Layer | Technologies |
+|---|---|
+| Frontend | React, JavaScript, Vite |
+| Backend | Python, FastAPI |
+| API validation | Pydantic-based schemas |
+| Data layer | Backend database and data models |
+| Analytics | Python-based data processing and analytics |
+| Testing | Python test suite |
+| Development tools | Git, GitHub, VS Code |
+
+The project uses a separate frontend and backend, allowing each part to be developed and maintained independently.
+
+## Application Architecture
+
+```text
+                 User
+                   |
+                   v
+          React Frontend (Vite)
+                   |
+                   v
+           FastAPI REST API
+                   |
+          +--------+--------+
+          |        |        |
+          v        v        v
+      Products   Sales   Customers
+          |        |        |
+          +--------+--------+
+                   |
+                   v
+             Data Layer
+                   |
+          +--------+--------+
+          |        |        |
+          v        v        v
+       Analytics Alerts  Predictions
+```
+
+*Conceptual overview of the application. Refer to the backend source code for the exact implementation and data flow.*
+
+## Project Structure
+
+```text
+stocksense-/
+├── backend/
+│   ├── app/
+│   │   ├── routers/
+│   │   │   ├── alerts.py
+│   │   │   ├── analytics.py
+│   │   │   ├── auth.py
+│   │   │   ├── customers.py
+│   │   │   ├── products.py
+│   │   │   ├── sales.py
+│   │   │   └── stock.py
+│   │   ├── config.py
+│   │   ├── database.py
+│   │   ├── demo_seed.py
+│   │   ├── main.py
+│   │   ├── models.py
+│   │   ├── prediction.py
+│   │   ├── schemas.py
+│   │   └── security.py
+│   ├── tests/
+│   │   └── test_api.py
+│   ├── requirements.txt
+│   └── .env.example
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── context/
+│   │   ├── pages/
+│   │   ├── api.js
+│   │   ├── App.jsx
+│   │   ├── main.jsx
+│   │   └── styles.css
+│   ├── package.json
+│   ├── vite.config.js
+│   └── .env.example
+├── .gitignore
+├── .python-version
+└── README.md
+```
+
+## Getting Started
+
+Follow these steps to run StockSense locally.
+
+### Prerequisites
+
+Install the following tools:
+
+- Git
+- Python version compatible with the project's `.python-version` file
+- Node.js and npm compatible with the frontend dependencies
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/VanSage/stocksense-.git
+cd stocksense-
+```
+
+### 2. Set up the backend
+
+From the project root, create a Python virtual environment:
+
+**Windows PowerShell**
+
+```powershell
+cd backend
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+```
+
+**macOS / Linux**
 
 ```bash
 cd backend
-python3 -m venv venv
-source venv/bin/activate          # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-python seed.py                    # creates a demo shop with sample data
-uvicorn app.main:app --reload --port 8000
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
 ```
 
-Backend is now running at **http://localhost:8000** (API docs at `/docs`).
+Configure the backend environment variables using `backend/.env.example` as a reference. Follow the variable names and requirements used by the application configuration.
 
-Runs on SQLite by default — zero setup. To use MySQL instead, see
-`backend/README.md`.
+Do not commit your real `.env` file or credentials.
 
-### 2. Frontend
+### 3. Set up the frontend
 
-In a second terminal:
+Open a second terminal from the repository root:
 
 ```bash
 cd frontend
 npm install
+```
+
+Configure any frontend environment variables required by `frontend/.env.example`. In particular, ensure that the frontend API base URL points to the backend address used in your local setup.
+
+Do not place private API keys or backend secrets in frontend environment variables.
+
+## Running the Application
+
+### Start the backend
+
+In the backend terminal, with the virtual environment activated:
+
+```powershell
+python -m uvicorn app.main:app --reload
+```
+
+The API will normally be available at:
+
+`http://127.0.0.1:8000`
+
+If your configuration specifies a different port, use that configured address instead.
+
+### Start the frontend
+
+In the frontend terminal:
+
+```bash
 npm run dev
 ```
 
-Frontend is now running at **http://localhost:5173**.
+Open the local URL printed by Vite in your terminal. The default development address is commonly `http://localhost:5173`.
 
-### 3. Log in
+Keep both development servers running while using the application.
 
-Open http://localhost:5173 and log in with the seeded demo account:
+> **Troubleshooting:** If login, signup, or dashboard requests fail, verify that the backend is running and that the frontend API base URL points to the correct backend. A frontend configured to call `localhost` will not automatically connect to a separately deployed backend.
 
-- **Email:** `owner@sharmastore.in`
-- **Password:** `password123`
+## API Documentation
 
-Or click "create a new shop account" to sign up fresh — every shop's data
-is fully isolated from every other shop.
+FastAPI can provide interactive API documentation at:
+
+- Swagger UI: `http://127.0.0.1:8000/docs`
+- ReDoc: `http://127.0.0.1:8000/redoc`
+
+These endpoints are available when enabled by the running backend configuration.
+
+Use the interactive documentation to inspect available endpoints and test API requests.
+
+## Testing
+
+The backend includes API tests under `backend/tests/`.
+
+From the backend directory, activate the virtual environment and run:
+
+```bash
+python -m pytest
+```
+
+If pytest is not installed, install it in your development environment before running the tests.
+
+Check the test output to confirm which tests pass or fail. Do not assume the application is fully tested solely because the test suite exists.
+
+## Environment Configuration
+
+The repository contains example environment files:
+
+- `backend/.env.example`
+- `frontend/.env.example`
+
+Use these files to identify the configuration needed by each application component.
+
+Before running or deploying the application:
+
+1. Review the example environment files.
+2. Configure the required database and API settings.
+3. Set the frontend API URL to the correct backend address.
+4. Keep private credentials out of source control.
+5. Verify that production settings differ appropriately from local development settings.
+
+Never publish passwords, access tokens, database credentials, or production secrets.
+
+## Current Status
+
+StockSense is under active development. The repository contains the frontend, backend API, authentication components, inventory-related modules, analytics, prediction functionality, and backend tests.
+
+Deployment status and production readiness should be confirmed separately. No live application URL is listed here because a verified public deployment link has not been established in this README.
+
+## Future Improvements
+
+Potential areas for further development include:
+
+- Evaluate prediction quality using historical sales data and suitable error metrics.
+- Improve analytical reporting and inventory performance insights.
+- Strengthen automated testing across frontend and backend workflows.
+- Improve deployment configuration and production monitoring.
+- Document API contracts and database setup in greater detail.
+
+## Project Goals
+
+StockSense brings together several areas of software and analytics practice:
+
+- **Full-stack development:** building a React frontend and FastAPI backend.
+- **API development:** organizing endpoints and data validation.
+- **Data analytics:** presenting operational information in useful analytical views.
+- **Inventory intelligence:** supporting demand prediction and stock-related decisions.
+- **Software quality:** maintaining source code, configuration examples, and automated tests.
 
 ---
 
-## What's included
+**Repository:** [VanSage/stocksense-](https://github.com/VanSage/stocksense-)
 
-| Feature (from the project synopsis) | Where it lives |
-|---|---|
-| User & shop management (signup/login, JWT auth, edit profile, change password) | `backend/app/routers/auth.py` + `frontend/src/components/SettingsModal.jsx` |
-| Sales logging (quick product search, no barcode needed, optional credit sale) | `frontend/src/pages/SalesEntry.jsx` + `backend/app/routers/sales.py` |
-| Real-time stock tracking | `backend/app/routers/stock.py` |
-| Demand prediction engine (moving average + trend, via pandas) | `backend/app/prediction.py` |
-| Smart reorder alerts + wastage warnings | `backend/app/routers/alerts.py` + auto-generated in `prediction.py` |
-| **Customers & udhaar (credit) ledger** | `backend/app/routers/customers.py` + `frontend/src/pages/Customers.jsx` |
-| Analytics dashboard (sales trend, category breakdown, top movers, savings estimate, credit outstanding) | `frontend/src/pages/Analytics.jsx` + `backend/app/routers/analytics.py` |
-
-The gear icon in the top bar opens Settings (edit shop name/category/location, your name, and change your password); the bell icon jumps straight to the Alerts page.
-
-### Customers & udhaar (credit) ledger
-
-A shop owner can add customers (name, phone, address) and either:
-- Mark a sale as **"sell on credit"** against a customer at the point of sale, which automatically creates a ledger entry, or
-- Record a **manual credit or payment** entry directly from a customer's ledger (e.g. correcting a balance, or logging a payment received).
-
-Each customer's current balance is always computed live from their transaction history (sum of credit entries minus payments) — never stored as a separate number that could drift out of sync. The Dashboard and Analytics pages both surface total outstanding credit across all customers.
-
-**Note on scope:** this feature was added after the original synopsis was written, which listed payment/credit tracking as out-of-scope for Version 1 (to differentiate from Vyapar/Khatabook, which are credit-tracking-first). If you're submitting the synopsis alongside this code, make sure both documents are updated to match — either add this feature to the synopsis, or keep it as a clearly-labeled "added beyond original scope" note, so your submitted documentation and your working demo don't contradict each other.
-
-The prediction engine and alert generation re-run automatically every time
-a sale is logged, and again on a 24-hour background schedule (via
-APScheduler) so alerts never go stale even on days with no new sales.
-
-## Easiest way to run it locally (one window, no Node needed)
-
-The compiled website is already included in `backend/static`, and the backend
-serves it. So you only need the backend:
-
-```bash
-cd backend
-python -m venv venv
-venv\Scripts\activate            # Mac/Linux: source venv/bin/activate
-pip install -r requirements.txt
-uvicorn app.main:app --port 8000
-```
-
-Then open **http://localhost:8000** and log in with `owner@sharmastore.in` /
-`password123`. The demo shop is created automatically on startup (set
-`AUTO_SEED=0` to turn that off) - no `python seed.py` step needed.
-
-The two-window developer mode (backend on :8000 + `npm run dev` on :5173)
-described above still works for editing the frontend.
-
-### Rebuilding the frontend (only after you change files in `frontend/src`)
-
-```bash
-cd frontend
-npm install
-npm run build
-cd ..
-rmdir /s /q backend\static          # Mac/Linux: rm -rf backend/static
-xcopy /E /I /Y frontend\dist backend\static   # Mac/Linux: cp -r frontend/dist backend/static
-```
-
-## Deploying online for free (single service)
-
-Because the backend serves the website too, there is only ONE thing to deploy.
-Do **not** use Vercel for this project - Vercel cannot run a FastAPI server or
-keep a database file.
-
-1. Push this project to GitHub.
-2. On render.com: New -> Web Service -> pick the repo. Settings:
-   - Root Directory: `backend`
-   - Build Command: `pip install -r requirements.txt`
-   - Start Command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-   - Instance type: Free
-3. Under **Environment** add:
-   - `PYTHON_VERSION` = `3.12.7`   (Render's default Python is now 3.14, too new for some libraries)
-   - `SECRET_KEY` = any long random text
-4. Deploy, then open your `https://<name>.onrender.com` address. That one URL
-   is the whole app.
-
-**Keeping data permanently (recommended):** Render's free disk is wiped on every
-restart/redeploy, so signups made on the SQLite default would disappear (the
-demo shop is recreated automatically, your own data is not). To keep data, create a
-free Postgres database at neon.tech, copy its connection string (starts with
-`postgresql://`) and add it in Render as the environment variable `DATABASE_URL`.
-Nothing else changes - the app switches database by itself.
-
-The free Render instance goes to sleep after ~15 minutes without visitors; the
-first visit afterwards takes up to a minute to wake. Open the site a few minutes
-before any demo.
-
-## Verifying it works
-
-The backend ships with a real end-to-end test suite (not a stub) that
-exercises every endpoint, including edge cases and multi-shop data
-isolation:
-
-```bash
-cd backend
-rm -f stocksense.db     # start from a clean database
-python tests/test_api.py
-```
-
-Every check prints `OK:` and the script exits non-zero on first failure.
-
-This project was built and verified the same way: the backend test suite
-was run for real, the frontend was built with `npm run build` to confirm
-zero compile errors, and the whole stack was exercised end-to-end (login,
-every page, logging a real sale, resolving a real alert) against the
-actual running backend before this was packaged up.
-
-## Project structure
-
-```
-stocksense/
-├── backend/        # FastAPI + SQLAlchemy + prediction engine — see backend/README.md
-└── frontend/       # React + Vite + react-bootstrap + Recharts
-```
-
-Each half has its own README with more detail — `backend/README.md` covers
-the API and how to switch from SQLite to MySQL; the frontend structure is
-straightforward Vite conventions (`src/pages`, `src/components`,
-`src/context`, `src/api.js`).
-
-## Design notes
-
-The UI deliberately avoids a generic admin-template look. The palette
-(deep plum + saffron + teal) and the "Stock Pulse" bar — the animated,
-color-coded health indicator that appears on every product row — exist to
-make the core idea of the product (prediction-driven stock health)
-visually unmistakable rather than decorative.
-
-## Known limitations (by design, see the project synopsis, Section 4)
-
-- Single-shop focus in this version — no multi-store management yet.
-- Prediction uses moving-average + trend analysis, not machine learning —
-  intentionally lightweight and explainable (see synopsis Section 2.2 for
-  the reasoning).
-- No payment gateway or delivery/logistics integration.
-- Barcode scanner support is optional and not required for any workflow.
-
-These are documented as future scope, not oversights.
+*Built as a practical project exploring full-stack development, retail operations, and data-driven inventory management.*
