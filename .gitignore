@@ -2,7 +2,7 @@
 backend/venv/
 **/__pycache__/
 *.pyc
-backend/stocksense.db
+backend/stocksense.db     
 backend/stocksense.db-journal
 backend/.env
 
